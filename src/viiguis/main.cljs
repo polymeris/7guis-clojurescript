@@ -7,14 +7,16 @@
     [viiguis.guis.temperature-converter]
     [viiguis.guis.flight-booker]
     [viiguis.guis.timer]
-    [viiguis.guis.crud]))
+    [viiguis.guis.crud]
+    [viiguis.guis.circle-drawer]))
 
 (def panels
   {"Counter" viiguis.guis.counter/panel
    "Temperature Converter" viiguis.guis.temperature-converter/panel
    "Flight Booker" viiguis.guis.flight-booker/panel
    "Timer" viiguis.guis.timer/panel
-   "CRUD" viiguis.guis.crud/panel})
+   "CRUD" viiguis.guis.crud/panel
+   "Circle Drawer" viiguis.guis.circle-drawer/panel})
 
 (defonce selected-panel (r/atom (first (keys panels))))
 
