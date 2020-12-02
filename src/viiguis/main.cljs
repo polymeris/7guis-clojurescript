@@ -5,11 +5,13 @@
 
     [viiguis.guis.counter]
     [viiguis.guis.temperature-converter]
+    [viiguis.guis.flight-booker]
     [viiguis.guis.timer]))
 
 (def panels
   {"Counter" viiguis.guis.counter/panel
    "Temperature Converter" viiguis.guis.temperature-converter/panel
+   "Flight Booker" viiguis.guis.flight-booker/panel
    "Timer" viiguis.guis.timer/panel})
 
 (defonce selected-panel (r/atom (first (keys panels))))
