@@ -1,7 +1,8 @@
 (ns viiguis.guis.crud
   (:require
     [reagent.core :as r]
-    [clojure.string :as string]))
+    [clojure.string :as string]
+    [cljs.reader]))
 
 ; Obviously this will remove duplicates
 ; Even "merge" records if we update the names to be the same
