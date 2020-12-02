@@ -3,10 +3,12 @@
     [reagent.dom]
     [reagent.core :as r]
 
-    [viiguis.guis.counter]))
+    [viiguis.guis.counter]
+    [viiguis.guis.temperature-converter]))
 
 (def panels
-  {"Counter" viiguis.guis.counter/panel})
+  {"Counter" viiguis.guis.counter/panel
+   "Temperature Converter" viiguis.guis.temperature-converter/panel})
 
 (defonce selected-panel (r/atom (first (keys panels))))
 
