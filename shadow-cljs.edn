@@ -1,0 +1,20 @@
+{:dependencies [[reagent "0.10.0"]]
+ :nrepl {:port 7888}
+ :source-paths ["src" "test"]
+ :builds {:browser {:target :browser
+                    :asset-path "/js"
+                    :devtools {:http-port 7000
+                               :http-root "public"
+                               :http-handler shadow.http.push-state/handle
+                               :after-load viiguis.main/render}
+                    :dev {:modules {:base {:entries [viiguis.main]}}
+                          :compiler-options {:optimizations :none}}
+                    :release {:modules {:base {:entries [viiguis.main]}}
+                              :output-dir "release/js"
+                              :compiler-options {:optimizations :advanced}}}
+          :test {:target :browser-test
+                 :test-dir "target"
+                 :devtools {:http-port 7010
+                            :http-root "target"}}
+          :karma-test {:target :karma
+                       :output-to "target/karma-test.js"}}}

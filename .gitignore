@@ -1,0 +1,7 @@
+.idea
+*.iml
+/pom.xml
+/node_modules
+/.shadow-cljs
+/target
+/public/js

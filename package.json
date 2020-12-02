@@ -1,0 +1,27 @@
+{
+  "name": "viiguis",
+  "version": "0.1.0",
+  "scripts": {
+    "pom": "shadow-cljs pom",
+    "test": "shadow-cljs compile karma-test && karma start --single-run",
+    "server": "shadow-cljs server",
+    "watch": "shadow-cljs watch browser test",
+    "release:cljs": "shadow-cljs release browser",
+    "release:html": "mkdir -p release && cp public/index.html release",
+    "release:report": "mkdir -p report && shadow-cljs run shadow.cljs.build-report browser report/release.html",
+    "release": "run-s release:*"
+  },
+  "dependencies": {
+    "create-react-class": "15.6.3",
+    "react": "16.13.0",
+    "react-dom": "16.13.0"
+  },
+  "devDependencies": {
+    "karma": "5.0.2",
+    "karma-chrome-launcher": "3.1.0",
+    "karma-cljs-test": "0.1.0",
+    "karma-junit-reporter": "2.0.1",
+    "npm-run-all": "4.1.5",
+    "shadow-cljs": "2.8.102"
+  }
+}
