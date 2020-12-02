@@ -1,0 +1,107 @@
+version: 2.1
+aliases:
+  - &npm_deps_cache_key npm-deps-cache-{{ checksum "package-lock.json" }}
+  - &cljs_deps_cache_key cljs-deps-cache-{{ checksum "shadow-cljs.edn" }}
+
+executors:
+  without-browsers:
+    docker:
+      - image: circleci/openjdk:11-node
+  with-browsers:
+    docker:
+      - image: circleci/openjdk:11-node-browsers
+
+commands:
+  restore_caches:
+    steps:
+      - restore_cache:
+          key: *npm_deps_cache_key
+          name: Restoring NPM cache
+      - restore_cache:
+          key: *cljs_deps_cache_key
+          name: Restoring CLJS cache
+
+  save_caches:
+    steps:
+      - save_cache:
+          key: *npm_deps_cache_key
+          name: Saving NPM cache
+          paths:
+            - node_modules
+      - save_cache:
+          key: *cljs_deps_cache_key
+          name: Saving CLJS cache
+          paths:
+            - .shadow-cljs
+            - ~/.m2
+
+  install_deps:
+    steps:
+      - run:
+          name: Update NPM
+          command: "sudo npm install -g npm@latest"
+      - run:
+          name: Install NPM deps
+          command: npm install
+      - run:
+          name: Install CLJS deps
+          command: npx shadow-cljs info
+
+jobs:
+  test:
+    executor: with-browsers
+    steps:
+      - checkout
+      - restore_caches
+      - install_deps
+      - save_caches
+
+      - run:
+          name: Run Karma tests
+          command: npm run test
+
+      - store_test_results:
+          path: ./report
+
+  release:
+    executor: without-browsers
+    steps:
+      - checkout
+      - restore_caches
+      - install_deps
+      - save_caches
+
+      - run:
+          name: Build release version
+          command: npm run release
+
+      - store_artifacts:
+          path: report
+          destination: report
+
+      - run:
+          name: Install & configure gh-pages
+          command: |
+            npm install gh-pages@3.1.0
+            git config user.email "ci-build@polymeris.dev"
+            git config user.name "ci-build"
+
+      - add_ssh_keys:
+          fingerprints:
+            - "aa:8a:b0:68:7b:c0:4b:dc:f5:e6:7f:e8:c5:03:13:1b"
+
+      - run:
+          name: Deploy to Github pages
+          command: npx gh-pages --message "[skip ci] Update" --dist ./release
+
+workflows:
+  version: 2
+  test_and_release:
+    jobs:
+      - test
+      - release:
+          requires:
+            - test
+#          filters:
+#            branches:
+#              only: master
