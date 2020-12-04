@@ -31,9 +31,12 @@
   [:<>
    [:header
     [:nav
-     [:div [:h1 "7GUIs"]
-      [:ul
-       [nav-link {:href "https://github.com/polymeris/7guis-clojurescript"} "Code"]]]
+     [:div {:style {:text-align :center}}
+      [:h1 "7GUIs"]
+      [:p "An implementation of "
+       [:a {:href "https://eugenkiss.github.io/7guis/"} "the 7GUIs benchmark"]
+       " in Clojurescript/Reagent."]
+      [:p [:a {:href "https://github.com/polymeris/7guis-clojurescript"} "Source code on Github"]]]
      [:ul
       (for [[title _] panels]
         ^{:key title}
