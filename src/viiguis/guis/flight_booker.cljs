@@ -47,28 +47,25 @@
                         :start now
                         :return now})]
     (fn []
-      [:div {:style {:display :flex
-                     :flex-direction :column
-                     :max-width "32em"
-                     :margin "0 auto"}}
-       [:select {:on-change (fn [ev]
-                              (swap! flight assoc :mode (.. ev -target -value)))
-                 :style {:margin-bottom "1em"}}
+      [:div.form
+       [:select.flight-booker--input
+        {:on-change (fn [ev]
+                      (swap! flight assoc :mode (.. ev -target -value)))}
         [:option {:value "one-way"} "one-way flight"]
         [:option {:value "return"} "return flight"]]
        ; could use input type="date" here, but that would make it impossible on some browsers to select an invalid date
        ; and trigger the background color change
-       [:input {:on-change (fn [ev]
-                             (swap! flight assoc :start (parse-date (.. ev -target -value))))
-                :default-value (date->iso-string (:start @flight))
-                :style {:margin-bottom "1em"
-                        :background-color (when-not (valid-date? (:start @flight)) "red")}}]
-       [:input {:on-change (fn [ev]
-                             (swap! flight assoc :return (parse-date (.. ev -target -value))))
-                :default-value (date->iso-string (:return @flight))
-                :disabled (not= "return" (:mode @flight))
-                :style {:margin-bottom "1em"
-                        :background-color (when-not (valid-date? (:return @flight)) "red")}}]
+       [:input.flight-booker--input
+        {:on-change (fn [ev]
+                      (swap! flight assoc :start (parse-date (.. ev -target -value))))
+         :default-value (date->iso-string (:start @flight))
+         :class (when-not (valid-date? (:start @flight)) "flight-booker--input--invalid")}]
+       [:input.flight-booker--input
+        {:on-change (fn [ev]
+                      (swap! flight assoc :return (parse-date (.. ev -target -value))))
+         :default-value (date->iso-string (:return @flight))
+         :disabled (not= "return" (:mode @flight))
+         :class (when-not (valid-date? (:return @flight)) "flight-booker--input--invalid")}]
        [:button
         {:disabled (not (can-book? @flight))
          :on-click #(js/alert (booking-message @flight))}

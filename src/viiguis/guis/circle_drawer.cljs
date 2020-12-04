@@ -5,16 +5,14 @@
 (defn circle
   [{:keys [geometry on-click selected]}]
   (let [[x y r] geometry]
-    [:circle {:cx x
-              :cy y
-              :r r
-              :stroke "black"
-              :stroke-width ".5"
-              :fill-opacity "0.2"
-              :fill (if selected "black" "transparent")
-              :on-click (fn [ev]
-                          (on-click)
-                          (.stopPropagation ev))}]))
+    [:circle.circles--circle
+     {:cx x
+      :cy y
+      :r r
+      :class (when selected "circles--circle--selected")
+      :on-click (fn [ev]
+                  (on-click)
+                  (.stopPropagation ev))}]))
 
 (defn context-menu
   "The menu that appears when you select a circle"
@@ -24,57 +22,34 @@
         on-click (fn [ev]
                    (on-click)
                    (.stopPropagation ev))]
-    [:g {:fill-opacity "0.8"}
-     [:rect
+    [:g
+     [:rect.circles--menu-background
       {:x x
        :y y
        :width 100
        :height 20
-       :stroke "black"
-       :stroke-width ".5"
-       :fill "#eee"
-       :cursor :pointer
        :on-click on-click}]
-     [:text
+     [:text.circles--menu-item
       {:x (+ x 5)
        :y (+ y 14)
-       :font-size 13
        :text-length 90
-       :font-family "sans"
-       :cursor :pointer
        :on-click on-click}
       "Adjust radius..."]]))
 
 (defn edit-dialog
   [{:keys [initial-value on-change on-cancel on-confirm]}]
-  [:div {:style {:position :fixed
-                 :top 0
-                 :left 0
-                 :width "100vw"
-                 :height "100vh"
-                 :z-index 99
-                 :background-color "rgba(0, 0, 0, 0.1)"}}
-   [:div {:style {:position :fixed
-                  :top "50vh"
-                  :left "calc(50vw - 100px)"
-                  :width "200px"
-                  :z-index 100
-                  :background-color "white"
-                  :border "1px solid #aaa"
-                  :display :flex
-                  :flex-direction :column}}
-    [:label {:style {:padding "0.5em"}}
+  [:div.modal-overlay
+   [:div.modal-dialog.flex-column
+    [:label
      "Adjust diameter of circle:"
-     [:input {:type :range
-              :default-value initial-value
-              :on-change (fn [ev]
-                           (on-change (js/Number (.. ev -target -value))))
-              :min 5
-              :max 100}]]
-    [:div {:style {:display :flex
-                   :flex-direction :row
-                   :justify-content :space-between
-                   :padding "0.5em"}}
+     [:input.circles--diameter-input
+      {:type :range
+       :default-value initial-value
+       :on-change (fn [ev]
+                    (on-change (js/Number (.. ev -target -value))))
+       :min 5
+       :max 100}]]
+    [:div.flex-row.modal-dialog--buttons
      [:button {:on-click on-cancel} "Cancel"]
      [:button {:on-click on-confirm} "OK"]]]])
 
@@ -121,12 +96,8 @@
                        :edit-stack '()
                        :redo-stack '()})]
     (fn []
-      [:div {:style {:display :flex
-                     :flex-direction :column}}
-       [:div {:style {:display :flex
-                      :flex-direction :row
-                      :justify-content :space-evenly
-                      :margin-bottom "1em"}}
+      [:div.flex-column
+       [:div.flex-row.circles--undo-buttons
         [:button
          {:on-click #(swap! state undo)
           :disabled (not (can-undo? @state))}
@@ -135,17 +106,14 @@
          {:on-click #(swap! state redo)
           :disabled (not (can-redo? @state))}
          "Redo"]]
-       [:svg {:on-click (fn [ev]
-                          ; This is a bit hackish, won't work if there are transformations on the svg or if it is
-                          ; padded. A more solid implementation would be to apply the inverse of the svg's transform
-                          (let [bb (.getBoundingClientRect (.-target ev))
-                                x (- (.-clientX ev) (.-x bb) 1) ; subract 1 for the border
-                                y (- (.-clientY ev) (.-y bb) 1)]
-                            (swap! state conj-edit [x y 20])))
-              :style {:width "100%"
-                      :height "calc(100vh - 20em)"
-                      :min-height "300px"
-                      :border "1px solid #ccc"}}
+       [:svg.circles--canvas
+        {:on-click (fn [ev]
+                     ; This is a bit hackish, won't work if there are transformations on the svg or if it is
+                     ; padded. A more solid implementation would be to apply the inverse of the svg's transform
+                     (let [bb (.getBoundingClientRect (.-target ev))
+                           x (- (.-clientX ev) (.-x bb) 1)  ; subract 1 for the border
+                           y (- (.-clientY ev) (.-y bb) 1)]
+                       (swap! state conj-edit [x y 20])))}
         [:<>
          (let [[selected-x selected-y _r] (:selected-circle @state)]
            (for [geometry (circle-geometry @state)]

@@ -26,23 +26,14 @@
   (let [surname-filter (r/atom nil)
         editing-item (r/atom nil)]
     (fn []
-      [:div {:style {:display :flex
-                     :flex-direction :column}}
-       [:div {:style {:display :flex
-                      :flex-direction :row
-                      :flex-wrap :wrap}}
-        [:div {:style {:display :flex
-                       :flex-grow 1
-                       :flex-direction :column}}
-         [:label {:style {:display :inline-flex
-                          :justify-content :space-between
-                          :align-items :baseline}}
+      [:div.form
+       [:div.flex-row
+        [:div.flex-column.flex-grow
+         [:label.crud--input-label.flex-row
           "Surname prefix:"
           ; the spec says this should only match surname prefixes. It would be easy to make this more versatile
-          [:input {:on-change (fn [ev]
-                                (reset! surname-filter (.. ev -target -value)))
-                   :style {:margin-left "1em"
-                           :flex-grow 1}}]]
+          [:input.crud--input {:on-change (fn [ev]
+                                            (reset! surname-filter (.. ev -target -value)))}]]
          (->> @db
               (filter (fn [{:keys [surname]}]
                         (or (not @surname-filter)
@@ -55,47 +46,34 @@
                      {:on-change (fn [ev]
                                    (let [value (cljs.reader/read-string (.. ev -target -value))]
                                      (reset! editing-item value)))
-                      :size 15
-                      :style {:margin "1em 0"}}]))]
-        [:div {:style {:display :flex
-                       :flex-direction :column
-                       :justify-content :flex-end
-                       :align-items :flex-end
-                       :margin "1em 0 1em 1em"}}
-         [:label {:style {:margin-bottom "1em"}}
+                      :size 15}]))]
+        [:div.crud--inputs.flex-column
+         [:label.crud--input-label
           "Name:"
-          [:input {:default-value (:name @editing-item)
-                   :on-change (fn [ev]
-                                (swap! editing-item assoc :name (.. ev -target -value)))
-                   :style {:margin-left "0.5em"}}]]
-         [:label
+          [:input.crud--input {:default-value (:name @editing-item)
+                               :on-change (fn [ev]
+                                            (swap! editing-item assoc :name (.. ev -target -value)))}]]
+         [:label.crud--input-label
           "Surname:"
-          [:input {:default-value (:surname @editing-item)
-                   :on-change (fn [ev]
-                                (swap! editing-item assoc :surname (.. ev -target -value)))
-                   :style {:margin-left "0.5em"}}]]]]
-       [:div {:style {:display :flex
-                      :flex-direction :row
-                      :justify-content :space-between}}
-        [:button
+          [:input.crud--input {:default-value (:surname @editing-item)
+                               :on-change (fn [ev]
+                                            (swap! editing-item assoc :surname (.. ev -target -value)))}]]]]
+       [:div.flex-row
+        [:button.crud--button
          {:on-click #(swap! db conj @editing-item)
           :disabled (or (string/blank? (:name @editing-item))
-                        (string/blank? (:surname @editing-item)))
-          :style {:flex-grow 1}}
+                        (string/blank? (:surname @editing-item)))}
          "Create"]
-        [:button
+        [:button.crud--button
          {:on-click #(swap! db (fn [db-val]
                                  (-> db-val
                                      (disj (selected-item))
                                      (conj @editing-item))))
           :disabled (or (not (selected-item))
                         (string/blank? (:name @editing-item))
-                        (string/blank? (:surname @editing-item)))
-          :style {:flex-grow 1
-                  :margin "0 1em"}}
+                        (string/blank? (:surname @editing-item)))}
          "Update"]
-        [:button
+        [:button.crud--button
          {:on-click #(swap! db disj (selected-item))
-          :disabled (not (element-value "#selected-item"))
-          :style {:flex-grow 1}}
+          :disabled (not (element-value "#selected-item"))}
          "Delete"]]])))

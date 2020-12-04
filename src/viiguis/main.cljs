@@ -31,7 +31,7 @@
   [:<>
    [:header
     [:nav
-     [:div {:style {:text-align :center}}
+     [:div.centered
       [:h1 "7GUIs"]
       [:p "An implementation of "
        [:a {:href "https://eugenkiss.github.io/7guis/"} "the 7GUIs benchmark"]

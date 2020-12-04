@@ -8,6 +8,7 @@
     "watch": "shadow-cljs watch browser test",
     "release:cljs": "shadow-cljs release browser",
     "release:html": "mkdir -p release && cp public/index.html release",
+    "release:css": "mkdir -p release && cp public/screen.css release",
     "release:report": "mkdir -p report && shadow-cljs run shadow.cljs.build-report browser report/release.html",
     "release": "run-s release:*"
   },

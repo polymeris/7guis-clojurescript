@@ -24,23 +24,21 @@
   ; Anything even a bit more complex or where the value is used
   ; elsewhere would require a r/atom at the least
   [:<>
-   [:input#celsius
+   [:input#celsius.temperature-converter--input
     {:type :number
      :step 0.1
      :on-change (fn [ev]
                   (some->> (.. ev -target -value)
                            (js/Number)
                            (celsius->fahrenheit)
-                           (set-element-value! "input#fahrenheit")))
-     :style {:margin-right "1em"}}]
+                           (set-element-value! "input#fahrenheit")))}]
    [:span "Celsius ="]
-   [:input#fahrenheit
+   [:input#fahrenheit.temperature-converter--input
     {:type :number
      :step 0.1
      :on-change (fn [ev]
                   (some->> (.. ev -target -value)
                            (js/Number)
                            (fahrenheit->celsius)
-                           (set-element-value! "input#celsius")))
-     :style {:margin "0 1em"}}]
+                           (set-element-value! "input#celsius")))}]
    [:span "Fahrenheit"]])

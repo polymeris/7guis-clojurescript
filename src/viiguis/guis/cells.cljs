@@ -179,11 +179,8 @@
             on-blur (fn [ev]
                       (reset! focused false)
                       (set! (.. ev -target -value) nil))]
-        [:td {:style {:height "22px"
-                      :width "120px"
-                      :border "1px solid #ccc"
-                      :padding 0}}
-         [:input
+        [:td.cells-table--cell
+         [:input.cells-table--input
           {:placeholder (str (or error-label value))
            :on-focus (fn [ev]
                        (reset! focused true)
@@ -196,20 +193,19 @@
                              (set-cell! sheet key (.. ev -target -value))
                              (.blur (.-target ev))
                              (on-blur ev)))
-           :style {:padding 0
-                   :font-style (when formula :italic)
-                   :font-weight (when (and (string? value) (string/starts-with? value "#")) :bold)
-
-                   :border (cond @focused "1px solid #777"
-                                 error-label "1px solid red"
-                                 :default "1px solid transparent")
-                   :width "120px"}}]]))))
+           :class [(when @focused
+                     "cells-table--input--focused")
+                   (when formula
+                     "cells-table--input--formula")
+                   (when (and (string? value) (string/starts-with? value "#"))
+                     "cells-table--input--bold")
+                   (when error-label
+                     "cells-table--input--error")]}]]))))
 
 (defn table-row
   [sheet row-n]
   [:tr
-   [:td {:style {:text-align :right
-                 :padding-right "0.5em"}}
+   [:td.cells-table--row-header
     row-n]
    (->> (range cols)
         (map (fn [c]
@@ -218,10 +214,9 @@
 
 (defn panel
   []
-  [:div
-   [:div {:style {:max-height "calc(100vh - 20em)"
-                  :overflow :scroll}}
-    [:table {:style {:width (str (* cols 90) "px")}}
+  [:<>
+   [:div.cells--sheet-container
+    [:table
      [:thead (->> (range (inc cols))
                   (map (fn [c] [:th (when (pos? c) (char (+ 64 c)))]))
                   (into [:tr]))]

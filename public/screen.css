@@ -1,0 +1,244 @@
+/* "Resets" */
+
+body {
+    margin: 0;
+}
+
+a, a:visited {
+    color: #22a;
+}
+
+ul {
+    list-style: none;
+}
+
+table {
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+th {
+    font-weight: normal;
+}
+
+td {
+    padding: 0;
+}
+
+li {
+    margin: 4px 0;
+}
+
+main {
+    padding: 2em;
+}
+
+output {
+    display: inline-block;
+    min-width: 3em;
+}
+
+::placeholder {
+    color: black;
+    opacity: 1;
+}
+
+/* Utilities */
+
+.centered {
+    text-align: center;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    max-width: 48em;
+    margin: 0 auto;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+}
+
+.flex-grow {
+    flex-grow: 1;
+}
+
+/* Component-specific styles */
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    background-color: #efe;
+    border-bottom: 1px solid #ccc;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.modal-dialog {
+    position: fixed;
+    top: 50vh;
+    left: calc(50vw - 100px);
+    width: 200px;
+    z-index: 100;
+    background-color: white;
+    border: 1px solid #aaa;
+    padding: 0.5em;
+}
+
+.modal-dialog--buttons {
+    justify-content: space-between;
+    margin-top: 0.5em;
+}
+
+.temperature-converter--input {
+    flex-grow: 1;
+    margin: 0 1em;
+}
+
+.flight-booker--input {
+    margin-bottom: 1em;
+}
+
+.flight-booker--input--invalid {
+    background-color: red;
+}
+
+.timer--input-label {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 1em;
+}
+
+.timer--input {
+    flex-grow: 1;
+    margin: 0 1em;
+}
+
+.timer--output {
+    display: inline-block;
+    width: 3em;
+}
+
+.crud--inputs {
+    margin-left: 1em;
+    align-items: end;
+}
+
+.crud--input {
+    flex-grow: 1;
+    margin-left: 1em;
+}
+
+.crud--input-label {
+    margin-bottom: 1em;
+}
+
+.crud--button {
+    flex-grow: 1;
+    margin-top: 1em;
+    margin-right: 1em;
+}
+
+.crud--button:last-of-type {
+    margin-right: 0;
+}
+
+.circles--diameter-input {
+    margin: 0.5em;
+}
+
+.circles--undo-buttons {
+    margin: 1em;
+    justify-content: space-around;
+}
+
+.circles--canvas {
+    width: 100%;
+    height: calc(100vh - 20em);
+    min-height: 300px;
+    border: 1px solid #ccc;
+}
+
+.circles--circle {
+    stroke: black;
+    stroke-width: 0.5;
+    fill-opacity: 0.2;
+    fill: transparent;
+    cursor: pointer;
+}
+
+.circles--circle--selected {
+    fill: black;
+}
+
+.circles--menu-background {
+    fill-opacity: 0.8;
+    stroke: black;
+    stroke-width: 0.5;
+    fill: #eee;
+    cursor: pointer;
+}
+
+.circles--menu-item {
+    font-size: 13px;
+    font-family: sans-serif;
+    cursor: pointer;
+}
+
+.cells--sheet-container {
+    max-height: calc(100vh - 20em);
+    overflow: scroll;
+}
+
+.cells-table--row-header {
+    text-align: right;
+    padding-right: 0.5em;
+}
+
+.cells-table--cell {
+    border: 1px solid #ccc;
+}
+
+.cells-table--input {
+    padding: 0;
+    width: 120px;
+    border: 1px solid transparent;
+}
+
+.cells-table--input--focused {
+    border: 1px solid #777;
+}
+
+.cells-table--input--formula::placeholder {
+    font-style: italic;
+}
+
+.cells-table--input--bold::placeholder {
+    font-weight: bold;
+}
+
+.cells-table--input--error::placeholder {
+    color: red;
+    text-align: center;
+}

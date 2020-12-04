@@ -7,8 +7,7 @@
   (let [counter (r/atom 0)]
     (fn []
       [:<>
-       [:output {:style {:display :inline-block
-                         :width "3em"}}
+       [:output
         (str @counter)]
        [:button
         {:on-click (fn [_ev] (swap! counter inc))}

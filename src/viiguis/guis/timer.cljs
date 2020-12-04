@@ -28,35 +28,24 @@
 
        :reagent-render
        (fn []
-         [:div {:style {:display :flex
-                        :flex-direction :column
-                        :max-width "48em"
-                        :margin "0 auto"}}
-          [:label {:style {:display :flex
-                           :flex-direction :row
-                           :justify-content :space-between
-                           :margin "1em"}}
+         [:div.form
+          [:label.timer--input-label
            "Elapsed time:"
-           [:progress {:value @elapsed
-                       :max @duration
-                       :style {:flex-grow 1
-                               :margin "0 1em"}}]
-           [:span {:style {:width "3em"}}
+           [:progress.timer--input
+            {:value @elapsed
+             :max @duration}]
+           [:output
             (str (.toFixed @elapsed 1) "s")]]
-          [:label {:style {:display :flex
-                           :flex-direction :row
-                           :justify-content :space-between
-                           :margin "1em"}}
+          [:label.timer--input-label
            "Duration:"
-           [:input {:type :range
-                    :default-value @duration
-                    :on-change (fn [ev]
-                                 (reset! duration (js/Number (.. ev -target -value))))
-                    :min 0
-                    :max 100
-                    :style {:flex-grow 1
-                            :margin "0 1em"}}]
-           [:span {:style {:width "3em"}}
+           [:input.timer--input
+            {:type :range
+             :default-value @duration
+             :on-change (fn [ev]
+                          (reset! duration (js/Number (.. ev -target -value))))
+             :min 0
+             :max 100}]
+           [:output
             (str @duration "s")]]
           [:button {:on-click #(reset! elapsed 0)}
            "Reset"]])})))
