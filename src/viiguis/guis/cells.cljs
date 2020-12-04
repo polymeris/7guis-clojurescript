@@ -146,10 +146,10 @@
   "Set a new formula for the cell. Adds watchers to the cells it depends on. Doesn't remove old watches!"
   [sheet cell new-formula]
   (doseq [watched-cell (formula-cells sheet new-formula)]
-    (add-watch watched-cell key
+    (add-watch watched-cell (:key @cell)
                (fn [_k r old-val new-val]
                  (when (not= (:value old-val) (:value new-val))
-                   (js/console.log "Update value of" (str key) "triggered by change in" (str (:key @r)))
+                   (js/console.log "Update value of" (str (:key @cell)) "triggered by change in" (str (:key @r)))
                    ; make this async
                    (js/setTimeout
                      (fn []
