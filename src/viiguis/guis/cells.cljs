@@ -175,7 +175,10 @@
     (fn [sheet key]
       (let [value (:value @cell)
             formula (:formula @cell)
-            error-label (:label (ex-data value))]
+            error-label (:label (ex-data value))
+            on-blur (fn [ev]
+                      (reset! focused false)
+                      (set! (.. ev -target -value) nil))]
         [:td {:style {:height "22px"
                       :width "120px"
                       :border "1px solid #ccc"
@@ -186,13 +189,13 @@
                        (reset! focused true)
                        (set! (.. ev -target -value)
                              (or formula value)))
-           :on-blur (fn [ev]
-                      (reset! focused false)
-                      (set! (.. ev -target -value) nil))
+           :on-blur on-blur
            :on-key-press (fn [ev]
                            (when (= "Enter" (.-key ev))
                              (.preventDefault ev)
-                             (set-cell! sheet key (.. ev -target -value))))
+                             (set-cell! sheet key (.. ev -target -value))
+                             (.blur (.-target ev))
+                             (on-blur ev)))
            :style {:padding 0
                    :font-style (when formula :italic)
                    :font-weight (when (and (string? value) (string/starts-with? value "#")) :bold)
