@@ -8,7 +8,8 @@
     [viiguis.guis.flight-booker]
     [viiguis.guis.timer]
     [viiguis.guis.crud]
-    [viiguis.guis.circle-drawer]))
+    [viiguis.guis.circle-drawer]
+    [viiguis.guis.cells]))
 
 (def panels
   {"Counter" viiguis.guis.counter/panel
@@ -16,7 +17,8 @@
    "Flight Booker" viiguis.guis.flight-booker/panel
    "Timer" viiguis.guis.timer/panel
    "CRUD" viiguis.guis.crud/panel
-   "Circle Drawer" viiguis.guis.circle-drawer/panel})
+   "Circle Drawer" viiguis.guis.circle-drawer/panel
+   "Cells" viiguis.guis.cells/panel})
 
 (defonce selected-panel (r/atom (first (keys panels))))
 
