@@ -135,4 +135,5 @@
                                                (-> s
                                                    (conj-edit edit)
                                                    (assoc :current-edit nil)
-                                                   (assoc :selected-circle edit)))))}])])))
+                                                   (assoc :selected-circle edit)))))}])
+       [:p [:small "Click on circles to edit their radius."]]])))
