@@ -112,7 +112,7 @@ nav {
 
 .temperature-converter--input {
     flex-grow: 1;
-    margin: 0 1em;
+    margin: 0.5em;
 }
 
 .flight-booker--input {
@@ -120,7 +120,7 @@ nav {
 }
 
 .flight-booker--input--invalid {
-    background-color: red;
+    color: red;
 }
 
 .timer--input-label {
@@ -135,13 +135,8 @@ nav {
     margin: 0 1em;
 }
 
-.timer--output {
-    display: inline-block;
-    width: 3em;
-}
-
 .crud--inputs {
-    margin-left: 1em;
+    margin: 1em 0 0 1em;
     align-items: end;
 }
 
