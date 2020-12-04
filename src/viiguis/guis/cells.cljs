@@ -33,6 +33,7 @@
        (into [])))
 
 (defn- ->reference
+  "Coerces reference symbol to ref seq like (:ref [0 1] [0 2]). Or nil if not a reference symbol."
   [r]
   (when (symbol? r)
     (let [[_ from _ to] (re-matches reference-regex (name r))
@@ -46,6 +47,7 @@
       (cons :ref keys))))
 
 (defn- ->literal
+  "Coerces into literal string, number or nil"
   [literal]
   (cond
     (js/isNaN literal) literal
@@ -53,11 +55,13 @@
     :default (js/Number literal)))
 
 (defn- ->formula
+  "Returns formula minus the leading =, or nil if not a formula"
   [formula]
   (when (and (string? formula) (string/starts-with? formula "="))
-    formula))
+    (subs formula 1)))
 
 (defn- parse-formula*
+  "Parses the formula into an AST"
   [formula]
   (->> (cljs.reader/read-string formula)
        (walk/postwalk
@@ -68,9 +72,9 @@
 
 (def parse-formula
   (memoize (fn [formula]
-             (if (->formula formula)
+             (if-let [formula (->formula formula)]
                (try
-                 (parse-formula* (subs formula 1))
+                 (parse-formula* formula)
                  (catch js/Error ex
                    (ex-info (str ex) {:label "WAT?" :formula formula})))
                (->literal formula)))))
@@ -103,6 +107,7 @@
            :value nil}))
 
 (defn make-sheet
+  "Returns cols x rows cells. Cols should be no more than 26 (Z) or bad things will happen"
   [cols rows]
   (->> (for [c (range cols)
              r (range rows)]
@@ -111,6 +116,7 @@
        (into {})))
 
 (defn- formula-references*
+  "Returns the refs of the cells the given formula 'depends' on"
   [formula]
   (let [cells (walk/postwalk (fn [x]
                                (if (seq? x)
@@ -126,41 +132,46 @@
 (def formula-references (memoize formula-references*))
 
 (defn formula-cells
+  "Returns the cell the given formula 'depends' on"
   [sheet formula]
   (map #(get sheet %) (formula-references formula)))
 
+(defn remove-watches!
+  "Removes watches. Call before changing cell formula or value"
+  [sheet cell]
+  (doseq [watched-cell (formula-cells sheet (:formula @cell))]
+    (remove-watch watched-cell key)))
+
 (defn- set-formula!
-  [sheet key new-formula]
-  (let [cell (get sheet key)
-        old-formula (:formula @cell)]
-    (js/console.log "Updating formula at" (str key) "from" old-formula "to" new-formula)
-    (doseq [watched-cell (formula-cells sheet old-formula)]
-      (remove-watch watched-cell key))
-    (doseq [watched-cell (formula-cells sheet new-formula)]
-      (add-watch watched-cell key
-                 (fn [_k r old-val new-val]
+  "Set a new formula for the cell. Adds watchers to the cells it depends on. Doesn't remove old watches!"
+  [sheet cell new-formula]
+  (doseq [watched-cell (formula-cells sheet new-formula)]
+    (add-watch watched-cell key
+               (fn [_k r old-val new-val]
+                 (when (not= (:value old-val) (:value new-val))
                    (js/console.log "Update value of" (str key) "triggered by change in" (str (:key @r)))
-                   (when (not= (:value old-val) (:value new-val))
-                     ; make this async
-                     (js/setTimeout
-                       (fn []
-                         (->> (parse-formula new-formula)
-                              (eval-formula sheet)
-                              (swap! cell assoc :value))))))))
-    (let [new-value (->> (parse-formula new-formula)
-                         (eval-formula sheet))]
-      (swap! cell assoc
-             :formula new-formula
-             :value new-value))
-    cell))
+                   ; make this async
+                   (js/setTimeout
+                     (fn []
+                       (->> (parse-formula new-formula)
+                            (eval-formula sheet)
+                            (swap! cell assoc :value))))))))
+  (let [new-value (->> (parse-formula new-formula)
+                       (eval-formula sheet))]
+    (swap! cell assoc
+           :formula new-formula
+           :value new-value)))
 
 (defn set-cell!
-  [sheet key value]
-  (if (->formula value)
-    (set-formula! sheet key value)
-    (swap! (get sheet key)
-           assoc :value (->literal value)
-           :formula nil)))
+  "Sets a new formula or value for the cell"
+  [sheet key formula-or-value]
+  (let [cell (get sheet key)]
+    (remove-watches! sheet cell)
+    (if (->formula formula-or-value)
+      (set-formula! sheet cell formula-or-value)
+      (swap! cell assoc
+             :value (->literal formula-or-value)
+             :formula nil))))
 
 (defonce cols 26)
 (defonce rows 100)
@@ -248,6 +259,10 @@
     (set-cell! sheet [1 8] "=(AVG B0 B2 B7)")
     (set-cell! sheet [0 9] "Repeated refs")
     (set-cell! sheet [1 9] "=(SUM B0 B0 B0)")
+    (set-cell! sheet [0 10] "Rectangular refs")
+    (set-cell! sheet [2 7] "100")
+    (set-cell! sheet [2 8] "200")
+    (set-cell! sheet [1 10] "=(SUM B7:C9)")
     (set-cell! sheet [2 0] "#Errors")
     (set-cell! sheet [2 1] "=(")
     (set-cell! sheet [2 2] "=B1000")
