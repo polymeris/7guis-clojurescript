@@ -47,9 +47,10 @@
 
 (defn- ->literal
   [literal]
-  (if (js/isNaN literal)
-    literal
-    (js/Number literal)))
+  (cond
+    (js/isNaN literal) literal
+    (= "" literal) nil
+    :default (js/Number literal)))
 
 (defn- ->formula
   [formula]
