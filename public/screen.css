@@ -1,3 +1,11 @@
+:root {
+    --border-color: #ccc;
+    --border: 1px solid var(--border-color);
+    --modal-width: 200px;
+    --form-width: 48em;
+    --nav-height: 20em;
+}
+
 /* "Resets" */
 
 body {
@@ -54,7 +62,7 @@ output {
 .form {
     display: flex;
     flex-direction: column;
-    max-width: 48em;
+    max-width: var(--form-width);
     margin: 0 auto;
 }
 
@@ -81,7 +89,8 @@ nav {
     flex-wrap: wrap;
     justify-content: space-evenly;
     background-color: #efe;
-    border-bottom: 1px solid #ccc;
+    border-bottom: var(--border);
+    max-height: var(--nav-height);
 }
 
 .modal-overlay {
@@ -97,8 +106,8 @@ nav {
 .modal-dialog {
     position: fixed;
     top: 50vh;
-    left: calc(50vw - 100px);
-    width: 200px;
+    left: calc(50vw - var(--modal-width) / 2);
+    width: var(--modal-width);
     z-index: 100;
     background-color: white;
     border: 1px solid #aaa;
@@ -170,9 +179,9 @@ nav {
 
 .circles--canvas {
     width: 100%;
-    height: calc(100vh - 20em);
+    height: calc(100vh - var(--nav-height));
     min-height: 300px;
-    border: 1px solid #ccc;
+    border: var(--border);
 }
 
 .circles--circle {
@@ -202,7 +211,7 @@ nav {
 }
 
 .cells--sheet-container {
-    max-height: calc(100vh - 20em);
+    max-height: calc(100vh - var(--nav-height));
     overflow: scroll;
 }
 
@@ -212,7 +221,7 @@ nav {
 }
 
 .cells-table--cell {
-    border: 1px solid #ccc;
+    border: var(--border);
 }
 
 .cells-table--input {
